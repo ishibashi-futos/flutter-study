@@ -10,12 +10,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now().toString();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Keycloak'),
+      home: MyHomePage(title: 'Keycloak: $now'),
     );
   }
 }
@@ -31,6 +32,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  List<String> titleList = ['www.google.co.jp', 'app.asana.com', 'www.amazon.co.jp'];
 
   void _incrementCounter() {
     setState(() {
@@ -46,22 +48,19 @@ class _MyHomePageState extends State<MyHomePage> {
         // AppBarのタイトルを中央寄せにする
         centerTitle: true,
       ),
-      body: ListView(
-        children: const [
-          ListTile(
-            leading: Icon(Icons.vpn_key),
-            title: Text('www.google.com'),
-          ),
-          ListTile(
-            leading: Icon(Icons.vpn_key),
-            title: Text('app.asana.com'),
-          ),
-          ListTile(
-            leading: Icon(Icons.vpn_key),
-            title: Text('amazon.co.jp'),
-          ),
-        ],
-      ),
+      body: ListView.builder(itemBuilder: (BuildContext context, int i) {
+        // 複数のWidgetをまとめて使いたいときはColumn Widgetを使用する
+        return Column(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.vpn_key),
+              title: Text(titleList[i]),
+            ),
+            const Divider(thickness: 1.25,)
+          ],
+        );
+        // ListBuilderContextの実行回数はitemCountで決定できる
+      }, itemCount: titleList.length,),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
@@ -71,9 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// TODO: リストを表示
-// TODO: リスト間に区切り線を表示
-// TODO: リスト表示を動的に
 // TODO: フローとアクションボタンをタップ時に、リストを1つ追加
 // TODO: 新しい画面を作成し、リストをタップしたときに遷移
 // TODO: 新しい画面のレイアウト作成
