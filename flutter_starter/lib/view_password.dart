@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_starter/edit_password.dart';
 
 class ViewPasswordPage extends StatefulWidget {
+  final String title;
+  const ViewPasswordPage({Key? key, required this.title}) : super(key: key);
   @override
   _ViewPasswordState createState() => _ViewPasswordState();
 }
@@ -10,7 +12,7 @@ class _ViewPasswordState extends State<ViewPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('View Password')),
+      appBar: AppBar(title: Text('View Password: ' + widget.title)),
       body: Padding(padding: const EdgeInsets.all(30.0),child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

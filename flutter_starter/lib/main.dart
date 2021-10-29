@@ -44,15 +44,16 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ListView.builder(itemBuilder: (BuildContext context, int i) {
         // 複数のWidgetをまとめて使いたいときはColumn Widgetを使用する
+        final title = titleList[i];
         return Column(
           children: [
             ListTile(
               onTap: () {
                 // 画面遷移処理の記述
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPasswordPage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPasswordPage(title: title)));
               },
               leading: const Icon(Icons.vpn_key),
-              title: Text(titleList[i]),
+              title: Text(title),
             ),
             const Divider(thickness: 1.25,)
           ],
