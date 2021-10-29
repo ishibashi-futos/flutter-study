@@ -31,14 +31,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   List<String> titleList = ['www.google.co.jp', 'app.asana.com', 'www.amazon.co.jp'];
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +55,14 @@ class _MyHomePageState extends State<MyHomePage> {
         // ListBuilderContextの実行回数はitemCountで決定できる
       }, itemCount: titleList.length,),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: () {
+          // ボタンが押された時の処理
+          titleList.add(DateTime.now().toString());
+          setState(() {
+            // void
+          });
+        },
+        tooltip: 'Add password item',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
