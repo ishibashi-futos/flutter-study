@@ -32,7 +32,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> titleList = ['www.google.co.jp', 'app.asana.com', 'www.amazon.co.jp'];
+  List<Password> passwords = [
+    Password(site: 'www.google.co.jp', id: 'hogehoge@gmail.com', password: 'password123'),
+    Password(site: 'app.asana.com', id: 'hogehoge@gmail.com', password: 'password123+asana'),
+    Password(site: 'www.amazon.co.jp', id: 'hogehoge@gmail.com', password: 'password123+amazon'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -44,13 +48,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ListView.builder(itemBuilder: (BuildContext context, int i) {
         // 複数のWidgetをまとめて使いたいときはColumn Widgetを使用する
-        final title = titleList[i];
+        final title = passwords[i].site;
         return Column(
           children: [
             ListTile(
               onTap: () {
                 // 画面遷移処理の記述
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPasswordPage(title: title)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPasswordPage(password: passwords[i])));
               },
               leading: const Icon(Icons.vpn_key),
               title: Text(title),
@@ -59,11 +63,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         );
         // ListBuilderContextの実行回数はitemCountで決定できる
-      }, itemCount: titleList.length,),
+      }, itemCount: passwords.length,),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // ボタンが押された時の処理
-          titleList.add(DateTime.now().toString());
+          // passwords.add(DateTime.now().toString());
           setState(() {
             // void
           });
@@ -75,4 +79,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// TODO: 新しい画面にリストからデータを引き継ぐ
+class Password {
+  final String site;
+  final String id;
+  final String password;
+  const Password({required this.site, required this.id, required this.password});
+}
