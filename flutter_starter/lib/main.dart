@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_starter/view_password.dart';
 
 void main() {
   runApp(const MyApp());
@@ -46,6 +47,10 @@ class _MyHomePageState extends State<MyHomePage> {
         return Column(
           children: [
             ListTile(
+              onTap: () {
+                // 画面遷移処理の記述
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPasswordPage()));
+              },
               leading: const Icon(Icons.vpn_key),
               title: Text(titleList[i]),
             ),
@@ -69,7 +74,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// TODO: フローとアクションボタンをタップ時に、リストを1つ追加
 // TODO: 新しい画面を作成し、リストをタップしたときに遷移
 // TODO: 新しい画面のレイアウト作成
 // TODO: 新しい画面にリストからデータを引き継ぐ
