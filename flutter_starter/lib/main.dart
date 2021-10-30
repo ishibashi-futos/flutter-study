@@ -33,10 +33,33 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Password> passwords = [
-    Password(site: 'www.google.co.jp', id: 'hogehoge@gmail.com', password: 'password123'),
-    Password(site: 'app.asana.com', id: 'hogehoge@gmail.com', password: 'password123+asana'),
-    Password(site: 'www.amazon.co.jp', id: 'hogehoge@gmail.com', password: 'password123+amazon'),
+    Password(
+        site: 'www.google.co.jp',
+        id: 'hogehoge@gmail.com',
+        password: 'password123'),
+    Password(
+        site: 'app.asana.com',
+        id: 'hogehoge@gmail.com',
+        password: 'password123+asana'),
+    Password(
+        site: 'www.amazon.co.jp',
+        id: 'hogehoge@gmail.com',
+        password: 'password123+amazon'),
   ];
+
+  void editItem(Password newPassword) {
+    final hasOldPassword = passwords.firstWhere(
+        (element) => element.site == newPassword.site,
+        orElse: () => const Password(site: '', id: '', password: ''));
+    if (hasOldPassword.site == '') {
+      passwords.add(newPassword);
+    } else {
+      passwords = passwords.map((p) {
+        return newPassword.site == p.site ? newPassword : p;
+      }).toList();
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,24 +69,33 @@ class _MyHomePageState extends State<MyHomePage> {
         // AppBarのタイトルを中央寄せにする
         centerTitle: true,
       ),
-      body: ListView.builder(itemBuilder: (BuildContext context, int i) {
-        // 複数のWidgetをまとめて使いたいときはColumn Widgetを使用する
-        final title = passwords[i].site;
-        return Column(
-          children: [
-            ListTile(
-              onTap: () {
-                // 画面遷移処理の記述
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPasswordPage(password: passwords[i])));
-              },
-              leading: const Icon(Icons.vpn_key),
-              title: Text(title),
-            ),
-            const Divider(thickness: 1.25,)
-          ],
-        );
-        // ListBuilderContextの実行回数はitemCountで決定できる
-      }, itemCount: passwords.length,),
+      body: ListView.builder(
+        itemBuilder: (BuildContext context, int i) {
+          // 複数のWidgetをまとめて使いたいときはColumn Widgetを使用する
+          final title = passwords[i].site;
+          return Column(
+            children: [
+              ListTile(
+                onTap: () {
+                  // 画面遷移処理の記述
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ViewPasswordPage(
+                              password: passwords[i], editPassword: editItem)));
+                },
+                leading: const Icon(Icons.vpn_key),
+                title: Text(title),
+              ),
+              const Divider(
+                thickness: 1.25,
+              )
+            ],
+          );
+          // ListBuilderContextの実行回数はitemCountで決定できる
+        },
+        itemCount: passwords.length,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // ボタンが押された時の処理
@@ -83,5 +115,10 @@ class Password {
   final String site;
   final String id;
   final String password;
-  const Password({required this.site, required this.id, required this.password});
+  const Password(
+      {required this.site, required this.id, required this.password});
+  @override
+  String toString() {
+    return '{"site": "$site", "id": "$id", "password": "$password"}';
+  }
 }
