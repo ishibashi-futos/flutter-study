@@ -14,3 +14,11 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## 各種資料
+
+| 記事のタイトルやキーワード | URL |
+| :- | :- |
+| クリップボードの使用 | https://qiita.com/sekitaka_1214/items/24f021605ef4961c746e |
+| Scaffoldウィジェット | https://codezine.jp/article/detail/13329 |
+| SnackBar(Notification) | https://api.flutter.dev/flutter/material/SnackBar-class.html |
