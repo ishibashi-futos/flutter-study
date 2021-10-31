@@ -6,7 +6,11 @@ import 'package:flutter/services.dart';
 class ViewPasswordPage extends StatefulWidget {
   final Password password;
   final EditPassword editPassword;
-  const ViewPasswordPage({Key? key, required this.password, required this.editPassword,}) : super(key: key);
+  const ViewPasswordPage({
+    Key? key,
+    required this.password,
+    required this.editPassword,
+  }) : super(key: key);
   @override
   _ViewPasswordState createState() => _ViewPasswordState();
 }
@@ -73,8 +77,13 @@ class _ViewPasswordState extends State<ViewPasswordPage> {
         tooltip: 'Edit item',
         child: const Icon(Icons.create),
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => EditPasswordPage(password: widget.password, saveAction: widget.editPassword,)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EditPasswordPage(
+                        password: widget.password,
+                        saveAction: widget.editPassword,
+                      )));
         },
       ),
     );

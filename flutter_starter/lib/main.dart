@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_starter/view_password.dart';
+import 'package:flutter_starter/edit_password.dart';
 
 void main() {
   runApp(const MyApp());
@@ -48,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   void editItem(Password newPassword) {
+    // TODO: 今の実装方法では、サイトURLが変更された場合別サイトとして登録されてしまう(バグ)
     final hasOldPassword = passwords.firstWhere(
         (element) => element.site == newPassword.site,
         orElse: () => const Password(site: '', id: '', password: ''));
@@ -98,11 +100,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // ボタンが押された時の処理
-          // passwords.add(DateTime.now().toString());
-          setState(() {
-            // void
-          });
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EditPasswordPage(
+                        password: Password.newBlankPassword(),
+                        saveAction: editItem,
+                      )));
         },
         tooltip: 'Add password item',
         child: const Icon(Icons.add),
@@ -120,5 +124,9 @@ class Password {
   @override
   String toString() {
     return '{"site": "$site", "id": "$id", "password": "$password"}';
+  }
+
+  static Password newBlankPassword() {
+    return const Password(site: '', id: '', password: '');
   }
 }

@@ -22,3 +22,5 @@ samples, guidance on mobile development, and a full API reference.
 | クリップボードの使用 | https://qiita.com/sekitaka_1214/items/24f021605ef4961c746e |
 | Scaffoldウィジェット | https://codezine.jp/article/detail/13329 |
 | SnackBar(Notification) | https://api.flutter.dev/flutter/material/SnackBar-class.html |
+| テキスト入力 | https://flutter.ctrnost.com/basic/interactive/form/textfield/ |
+| Singleton | https://flutter.keicode.com/dart/singleton.php |
