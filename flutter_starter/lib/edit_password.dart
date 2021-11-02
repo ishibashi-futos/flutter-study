@@ -22,6 +22,7 @@ class _EditPasswordState extends State<EditPasswordPage> {
   late String _site;
   late String _id;
   late String _password;
+  bool _isObscure = true;
   static final Logger _logger = Logger();
 
   void _handleTextSite(String s) {
@@ -59,6 +60,15 @@ class _EditPasswordState extends State<EditPasswordPage> {
       _id = widget.password.id;
       _password = widget.password.password;
     });
+  }
+
+  @override
+  void dispose() {
+    // リソースの開放処理を明示的に呼び出す.
+    _textEditingControllerWithSite.dispose();
+    _textEditingControllerWithId.dispose();
+    _textEditingControllerWithPassword.dispose();
+    super.dispose();
   }
 
   @override
@@ -103,12 +113,21 @@ class _EditPasswordState extends State<EditPasswordPage> {
             child: TextField(
               enabled: true,
               maxLength: 255,
-              obscureText: false,
+              obscureText: _isObscure,
               maxLines: 1,
-              decoration: const InputDecoration(
-                  icon: Icon(Icons.vpn_key),
+              decoration: InputDecoration(
+                  icon: const Icon(Icons.vpn_key),
                   hintText: 'Site Password',
-                  labelText: 'Site Password'),
+                  labelText: 'Site Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _isObscure = !_isObscure;
+                      });
+                    },
+                  )
+              ),
               controller: _textEditingControllerWithPassword,
               onChanged: _handleTextPassword,
             ),
