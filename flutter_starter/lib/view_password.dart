@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_starter/edit_password.dart';
-import 'package:flutter_starter/main.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_starter/repository/password_repository.dart';
 
-class ViewPasswordPage extends StatefulWidget {
-  final Password password;
-  final EditPassword editPassword;
+class ViewPasswordPage extends StatelessWidget {
+  final String passwordId;
+  final UpdatePassword updatePassword;
   const ViewPasswordPage({
     Key? key,
-    required this.password,
-    required this.editPassword,
+    required this.passwordId,
+    required this.updatePassword,
   }) : super(key: key);
-  @override
-  _ViewPasswordState createState() => _ViewPasswordState();
-}
 
-class _ViewPasswordState extends State<ViewPasswordPage> {
   @override
   Widget build(BuildContext context) {
+    final _password = PasswordRepository().findId(passwordId);
     return Scaffold(
-      appBar: AppBar(title: Text(widget.password.site)),
+      appBar: AppBar(title: Text(_password!.site)),
       body: Padding(
           padding: const EdgeInsets.all(30.0),
           child: Column(
@@ -31,7 +28,7 @@ class _ViewPasswordState extends State<ViewPasswordPage> {
                   const Text(':'),
                   Padding(
                       padding: const EdgeInsets.all(10),
-                      child: Text(widget.password.id))
+                      child: Text(_password.id))
                 ],
               ),
               const Padding(
@@ -47,17 +44,19 @@ class _ViewPasswordState extends State<ViewPasswordPage> {
                         children: [
                           SizedBox(
                             width: 150,
-                            child: Text(widget.password.password.length > 15
-                                ? widget.password.password.substring(0, 10) +
-                                    '...'
-                                : widget.password.password),
+                            child: Text(_repeatString(
+                                    '●',
+                                    _password.password.length > 15
+                                        ? 15
+                                        : _password.password.length) +
+                                (_password.password.length > 15 ? '...' : '')),
                           ),
                           // パスワードのコピーボタンを実装
                           IconButton(
                             icon: const Icon(Icons.copy),
                             onPressed: () async {
                               final data =
-                                  ClipboardData(text: widget.password.password);
+                                  ClipboardData(text: _password.password);
                               await Clipboard.setData(data);
                               // パスワードのコピーに成功した場合、SnackBarという画面下部の通知エリアに通知を2秒間だけ表示する
                               ScaffoldMessenger.of(context)
@@ -81,11 +80,19 @@ class _ViewPasswordState extends State<ViewPasswordPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => EditPasswordPage(
-                        password: widget.password,
-                        saveAction: widget.editPassword,
+                        id: passwordId,
+                        updatePassword: updatePassword,
                       )));
         },
       ),
     );
   }
+}
+
+String _repeatString(String s, int length) {
+  var buffer = StringBuffer();
+  for (var i = 0; i < length; i++) {
+    buffer.write(s);
+  }
+  return buffer.toString();
 }

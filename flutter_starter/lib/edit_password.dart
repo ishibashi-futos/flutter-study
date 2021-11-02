@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_starter/main.dart';
 import 'package:flutter_starter/logger.dart';
-
-typedef EditPassword = void Function(Password);
+import 'package:flutter_starter/repository/password_repository.dart';
 
 class EditPasswordPage extends StatefulWidget {
-  final Password password;
-  final EditPassword saveAction;
+  final String id;
+  final UpdatePassword updatePassword;
   const EditPasswordPage(
-      {Key? key, required this.password, required this.saveAction})
+      {Key? key, required this.id, required this.updatePassword})
       : super(key: key);
 
   @override
   _EditPasswordState createState() => _EditPasswordState();
 }
+
+typedef UpdatePassword = void Function(String id, Password password);
 
 class _EditPasswordState extends State<EditPasswordPage> {
   late TextEditingController _textEditingControllerWithSite;
@@ -24,6 +24,7 @@ class _EditPasswordState extends State<EditPasswordPage> {
   late String _password;
   bool _isObscure = true;
   static final Logger _logger = Logger();
+  final _repository = PasswordRepository();
 
   void _handleTextSite(String s) {
     _logger.info('site changed: $s');
@@ -49,16 +50,17 @@ class _EditPasswordState extends State<EditPasswordPage> {
   @override
   void initState() {
     super.initState();
+    var password = _repository.findId(widget.id);
+    password ??= Password.newBlankPassword();
     _textEditingControllerWithSite =
-        TextEditingController(text: widget.password.site);
-    _textEditingControllerWithId =
-        TextEditingController(text: widget.password.id);
+        TextEditingController(text: password.site);
+    _textEditingControllerWithId = TextEditingController(text: password.id);
     _textEditingControllerWithPassword =
-        TextEditingController(text: widget.password.password);
+        TextEditingController(text: password.password);
     setState(() {
-      _site = widget.password.site;
-      _id = widget.password.id;
-      _password = widget.password.password;
+      _site = password!.site;
+      _id = password.id;
+      _password = password.password;
     });
   }
 
@@ -120,14 +122,14 @@ class _EditPasswordState extends State<EditPasswordPage> {
                   hintText: 'Site Password',
                   labelText: 'Site Password',
                   suffixIcon: IconButton(
-                    icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
+                    icon: Icon(
+                        _isObscure ? Icons.visibility_off : Icons.visibility),
                     onPressed: () {
                       setState(() {
                         _isObscure = !_isObscure;
                       });
                     },
-                  )
-              ),
+                  )),
               controller: _textEditingControllerWithPassword,
               onChanged: _handleTextPassword,
             ),
@@ -138,8 +140,7 @@ class _EditPasswordState extends State<EditPasswordPage> {
         onPressed: () {
           final password = Password(site: _site, id: _id, password: _password);
           _logger.info(password.toString());
-          widget.saveAction(password);
-          Navigator.pop(context);
+          widget.updatePassword(widget.id, password);
         },
         child: const Icon(Icons.save),
       ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_starter/logger.dart';
 import 'package:flutter_starter/view_password.dart';
 import 'package:flutter_starter/edit_password.dart';
+import 'package:flutter_starter/repository/password_repository.dart';
+import 'package:uuid/uuid.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,69 +15,65 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now().toString();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Keycloak: $now'),
+      home: const MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class KeyValuePair<K, V> {
+  final K key;
+  final V value;
+  const KeyValuePair({required this.key, required this.value});
+}
 
-  final String title;
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Password> passwords = [
-    Password(
-        site: 'www.google.co.jp',
-        id: 'hogehoge@gmail.com',
-        password: 'password123'),
-    Password(
-        site: 'app.asana.com',
-        id: 'hogehoge@gmail.com',
-        password: 'password123+asana'),
-    Password(
-        site: 'www.amazon.co.jp',
-        id: 'hogehoge@gmail.com',
-        password: 'password123+amazon'),
-  ];
+  static final Logger _logger = Logger();
+  List<KeyValuePair<String, Password>> _passwords =
+      PasswordRepository().findAll().entries.map((e) {
+    return KeyValuePair<String, Password>(key: e.key, value: e.value);
+  }).toList();
+  String _title = 'Keycloak: ${DateTime.now().toString()}';
 
-  void editItem(Password newPassword) {
-    // TODO: 今の実装方法では、サイトURLが変更された場合別サイトとして登録されてしまう(バグ)
-    final hasOldPassword = passwords.firstWhere(
-        (element) => element.site == newPassword.site,
-        orElse: () => const Password(site: '', id: '', password: ''));
-    if (hasOldPassword.site == '') {
-      passwords.add(newPassword);
-    } else {
-      passwords = passwords.map((p) {
-        return newPassword.site == p.site ? newPassword : p;
+  void _updatePassword(String id, Password password) {
+    _logger.info('update state');
+    setState(() {
+      var repository = PasswordRepository();
+      repository.update(id, password);
+      _passwords = repository.findAll().entries.map((e) {
+        return KeyValuePair<String, Password>(key: e.key, value: e.value);
       }).toList();
-    }
-    setState(() {});
+      final now = DateTime.now().toString();
+      _title = 'Keycloak: $now';
+    });
+    // 最後は必ずホームに戻る
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const MyHomePage()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(_title),
         // AppBarのタイトルを中央寄せにする
         centerTitle: true,
       ),
       body: ListView.builder(
         itemBuilder: (BuildContext context, int i) {
           // 複数のWidgetをまとめて使いたいときはColumn Widgetを使用する
-          final title = passwords[i].site;
+          final title = _passwords[i].value.site;
           return Column(
             children: [
               ListTile(
@@ -84,7 +83,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => ViewPasswordPage(
-                              password: passwords[i], editPassword: editItem)));
+                                passwordId: _passwords[i].key,
+                                updatePassword: _updatePassword,
+                              )));
                 },
                 leading: const Icon(Icons.vpn_key),
                 title: Text(title),
@@ -96,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
           );
           // ListBuilderContextの実行回数はitemCountで決定できる
         },
-        itemCount: passwords.length,
+        itemCount: _passwords.length,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -104,29 +105,13 @@ class _MyHomePageState extends State<MyHomePage> {
               context,
               MaterialPageRoute(
                   builder: (context) => EditPasswordPage(
-                        password: Password.newBlankPassword(),
-                        saveAction: editItem,
+                        id: const Uuid().v4(),
+                        updatePassword: _updatePassword,
                       )));
         },
         tooltip: 'Add password item',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
-  }
-}
-
-class Password {
-  final String site;
-  final String id;
-  final String password;
-  const Password(
-      {required this.site, required this.id, required this.password});
-  @override
-  String toString() {
-    return '{"site": "$site", "id": "$id", "password": "$password"}';
-  }
-
-  static Password newBlankPassword() {
-    return const Password(site: '', id: '', password: '');
   }
 }
