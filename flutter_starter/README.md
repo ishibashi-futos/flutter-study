@@ -24,3 +24,5 @@ samples, guidance on mobile development, and a full API reference.
 | SnackBar(Notification) | https://api.flutter.dev/flutter/material/SnackBar-class.html |
 | テキスト入力 | https://flutter.ctrnost.com/basic/interactive/form/textfield/ |
 | Singleton | https://flutter.keicode.com/dart/singleton.php |
+| Navigator.pushした先の画面から戻ってきたことを検知する | https://qiita.com/superman9387/items/0025d23861c6c076e867 |
+| パスワード生成のロジック | https://qiita.com/delph/items/7786fadbf71ff45d8162 |

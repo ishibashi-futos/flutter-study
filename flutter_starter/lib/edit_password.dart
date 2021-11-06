@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_starter/create_password.dart';
 import 'package:flutter_starter/logger.dart';
 import 'package:flutter_starter/repository/password_repository.dart';
 
@@ -52,8 +53,7 @@ class _EditPasswordState extends State<EditPasswordPage> {
     super.initState();
     var password = _repository.findId(widget.id);
     password ??= Password.newBlankPassword();
-    _textEditingControllerWithSite =
-        TextEditingController(text: password.site);
+    _textEditingControllerWithSite = TextEditingController(text: password.site);
     _textEditingControllerWithId = TextEditingController(text: password.id);
     _textEditingControllerWithPassword =
         TextEditingController(text: password.password);
@@ -76,7 +76,30 @@ class _EditPasswordState extends State<EditPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Password')),
+      appBar: AppBar(
+        title: const Text('Edit Password'),
+        actions: <Widget>[
+          PopupMenuButton<Choice>(
+            onSelected: (Choice choice) {
+              if (choice.title == '自動生成') {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CreateNewPassword())).then(
+                    (value) => _textEditingControllerWithPassword.text = value);
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem<Choice>(
+                  value: Choice(title: '自動生成', icon: Icons.create),
+                  child: Text('自動生成'),
+                )
+              ];
+            },
+          ),
+        ],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -146,4 +169,10 @@ class _EditPasswordState extends State<EditPasswordPage> {
       ),
     );
   }
+}
+
+class Choice {
+  final String title;
+  final IconData icon;
+  const Choice({required this.title, required this.icon});
 }
